@@ -31,9 +31,10 @@ DWORD WINAPI Encerramento(LPVOID);	// declaração da thread  que cuida do encer
 
 int main() {
 
-	HANDLE hTarefa1, hTarefa2, hTarefa3, hTarefa4, hTarefa5, hEncerramento;
+	HANDLE hThreads[6];
 	DWORD dwtarefa1ID, dwtarefa2ID, dwtarefa3ID, dwtarefa4ID, dwtarefa5ID, dwencerramentoID;
 	DWORD dwExitCode = 0;
+	DWORD dwRet;
 
 	char a='n';
 	int i=0;
@@ -43,40 +44,50 @@ int main() {
 	_getch();
 
 	
-	hTarefa1 = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa1, &i, 0, (CAST_LPDWORD)&dwtarefa1ID);
-	if (hTarefa1) printf("Tarefa 1 criada com Id= %0x \n",dwtarefa1ID);
+	hThreads[0] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa1, &i, 0, (CAST_LPDWORD)&dwtarefa1ID);
+	if (hThreads[0]) printf("Tarefa 1 criada com Id= %0x \n",dwtarefa1ID);
 
-	hTarefa2 = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa2, &i, 0, (CAST_LPDWORD)&dwtarefa2ID);
-	if (hTarefa2) printf("Tarefa 2 criada com Id= %0x \n", dwtarefa2ID);
+	hThreads[1] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa2, &i, 0, (CAST_LPDWORD)&dwtarefa2ID);
+	if (hThreads[1]) printf("Tarefa 2 criada com Id= %0x \n", dwtarefa2ID);
 
-	hTarefa3 = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa3, &i, 0, (CAST_LPDWORD)&dwtarefa3ID);
-	if (hTarefa3) printf("Tarefa 3 criada com Id= %0x \n", dwtarefa3ID);
+	hThreads[2] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa3, &i, 0, (CAST_LPDWORD)&dwtarefa3ID);
+	if (hThreads[2]) printf("Tarefa 3 criada com Id= %0x \n", dwtarefa3ID);
 
-	hTarefa4 = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa4, &i, 0, (CAST_LPDWORD)&dwtarefa4ID);
-	if (hTarefa4) printf("Tarefa 4 criada com Id= %0x \n", dwtarefa4ID);
+	hThreads[3] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa4, &i, 0, (CAST_LPDWORD)&dwtarefa4ID);
+	if (hThreads[3]) printf("Tarefa 4 criada com Id= %0x \n", dwtarefa4ID);
 
-	hTarefa5 = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa5, &i, 0, (CAST_LPDWORD)&dwtarefa5ID);
-	if (hTarefa5) printf("Tarefa 5 criada com Id= %0x \n", dwtarefa5ID);
+	hThreads[4] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa5, &i, 0, (CAST_LPDWORD)&dwtarefa5ID);
+	if (hThreads[4]) printf("Tarefa 5 criada com Id= %0x \n", dwtarefa5ID);
 
-	hEncerramento = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Encerramento, &i, 0, (CAST_LPDWORD)&dwencerramentoID);
-	if (hEncerramento) printf("Tarefa de Encerramento criada com Id= %0x \n", dwencerramentoID);
+	hThreads[5] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Encerramento, &i, 0, (CAST_LPDWORD)&dwencerramentoID);
+	if (hThreads[5]) printf("Tarefa de Encerramento criada com Id= %0x \n", dwencerramentoID);
 
-	while (a!='s' & a!='S')
+
+
+
+	while (a!='s' && a!='S')
 	{
 		printf("aqui");
 		a = getchar();
 
+
 	}
 
+	dwRet = WaitForMultipleObjects(5, hThreads, TRUE, INFINITE);
+	//CheckForError((dwRet >= WAIT_OBJECT_0) && (dwRet < WAIT_OBJECT_0 + 6));
+
+	for (i = 0; i < 6; ++i) {
+		GetExitCodeThread(hThreads[i], &dwExitCode);
+		printf("thread %d terminou: codigo=%d\n", i, dwExitCode);
+		CloseHandle(hThreads[i]);	// apaga referência ao objeto
+	}  // for 
+	
 
 
 
 
-
-
-
-
-
+	printf("\nAcione uma tecla para terminar\n");
+	_getch(); // // Pare aqui, caso não esteja executando no ambiente MDS
 
 
 		return EXIT_SUCCESS;
