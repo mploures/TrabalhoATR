@@ -44,7 +44,7 @@ int main() {
 	_getch();
 
 	
-	hThreads[0] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa1, &i, 0, (CAST_LPDWORD)&dwtarefa1ID);
+	hThreads[0] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa1, NULL, 0, (CAST_LPDWORD)&dwtarefa1ID);
 	if (hThreads[0]) printf("Tarefa 1 criada com Id= %0x \n",dwtarefa1ID);
 
 	hThreads[1] = (HANDLE)_beginthreadex(NULL, 0, (CAST_FUNCTION)Tarefa2, &i, 0, (CAST_LPDWORD)&dwtarefa2ID);
@@ -65,13 +65,6 @@ int main() {
 
 
 
-	while (a!='s' && a!='S')
-	{
-		printf("aqui");
-		a = getchar();
-
-
-	}
 
 	dwRet = WaitForMultipleObjects(5, hThreads, TRUE, INFINITE);
 	//CheckForError((dwRet >= WAIT_OBJECT_0) && (dwRet < WAIT_OBJECT_0 + 6));
